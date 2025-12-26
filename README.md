@@ -1,73 +1,90 @@
-# Welcome to your Lovable project
+# PredictWiseAI
 
-## Project info
+AI-powered exam question prediction platform that analyzes previous year question papers to predict likely questions for upcoming exams.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Project Structure
 
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+├── client/          # React frontend (Vite + TypeScript)
+├── server/          # Node.js backend (Express)
+├── database/        # Database schema and migrations
+└── README.md
 ```
 
-**Edit a file directly in GitHub**
+## Quick Start
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+- Supabase account (for database)
+- OpenAI API key (for AI analysis)
 
-**Use GitHub Codespaces**
+### 1. Setup Environment Variables
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+**Client** (`client/.env`):
+```env
+VITE_API_BASE=http://localhost:3001
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_key
+```
 
-## What technologies are used for this project?
+**Server** (`server/.env`):
+```env
+PORT=3001
+NODE_ENV=development
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_key
+OPENAI_API_KEY=your_openai_key
+```
 
-This project is built with:
+### 2. Install Dependencies
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```bash
+# Install client dependencies
+cd client && npm install
 
-## How can I deploy this project?
+# Install server dependencies
+cd ../server && npm install
+```
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+### 3. Setup Database
 
-## Can I connect a custom domain to my Lovable project?
+1. Create a Supabase project at https://supabase.com
+2. Run `database/schema.sql` in the SQL Editor
 
-Yes, you can!
+### 4. Start Development
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+```bash
+# Terminal 1 - Start server
+cd server && npm run dev
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+# Terminal 2 - Start client
+cd client && npm run dev
+```
+
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3001
+
+## Features
+
+- 📄 Upload PDF question papers
+- 🤖 AI-powered question extraction and analysis
+- 📊 Interactive dashboard with charts
+- 🎯 Predicted questions with confidence scores
+- 📥 Download predicted question papers
+
+## Tech Stack
+
+- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, shadcn/ui, Recharts
+- **Backend**: Node.js, Express, pdf-parse, OpenAI API
+- **Database**: Supabase (PostgreSQL)
+
+## API Endpoints
+
+- `POST /api/analyze` - Upload and analyze PDFs
+- `GET /api/predictions/:subjectCode` - Get predictions for a subject
+- `GET /api/health` - Health check
+
+## License
+
+MIT
