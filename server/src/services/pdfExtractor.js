@@ -1,28 +1,38 @@
-const pdfParse = require('pdf-parse');
-
 /**
  * PDF Text Extraction Service
- * Handles text extraction from PDF files with cleaning
+ * Basic PDF handling - main extraction done by Gemini Vision
  */
 
 /**
  * Extract text from PDF buffer
+ * Returns minimal info since Gemini Vision handles actual extraction
  */
 async function extractTextFromPDF(buffer) {
   try {
-    const data = await pdfParse(buffer, {
-      // Increase max pages if needed
-      max: 50
-    });
+    // Basic PDF validation - check for PDF header
+    const header = buffer.slice(0, 5).toString();
+    if (!header.startsWith('%PDF-')) {
+      return {
+        text: '',
+        numPages: 0,
+        error: 'Invalid PDF file'
+      };
+    }
     
+    // Estimate page count from PDF (rough estimate)
+    const content = buffer.toString('binary');
+    const pageMatches = content.match(/\/Type\s*\/Page[^s]/g);
+    const numPages = pageMatches ? pageMatches.length : 1;
+    
+    // Return empty text - Gemini Vision will do the actual extraction
     return {
-      text: cleanExtractedText(data.text),
-      numPages: data.numpages,
-      info: data.info,
-      metadata: data.metadata
+      text: '',
+      numPages: numPages,
+      info: {},
+      metadata: {}
     };
   } catch (error) {
-    console.error('PDF extraction error:', error.message);
+    console.error('PDF validation error:', error.message);
     return {
       text: '',
       numPages: 0,
@@ -38,47 +48,18 @@ function cleanExtractedText(text) {
   if (!text) return '';
   
   return text
-    // Remove zero-width characters
     .replace(/[\u200B-\u200D\uFEFF]/g, '')
-    // Remove common PDF artifacts
-    .replace(/QP\d+[A-Z]*_\d+\s*\|\s*/gi, '')
-    .replace(/Printed Page:\s*\d+\s*of\s*\d+/gi, '')
-    // Remove IP addresses (often in headers)
-    .replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g, '')
-    // Remove timestamps
-    .replace(/\d{1,2}:\d{2}:\d{2}\s*(AM|PM)?/gi, '')
-    // Remove date patterns
-    .replace(/\d{1,2}[-\/]\d{1,2}[-\/]\d{2,4}/g, '')
-    // Remove repeated pipe characters
-    .replace(/\|+/g, ' ')
-    // Remove page numbers at start of lines
-    .replace(/^\s*Page\s*\d+\s*$/gim, '')
-    // Remove excessive whitespace
     .replace(/\s+/g, ' ')
-    // Remove lines that are just numbers
-    .replace(/^\s*\d+\s*$/gm, '')
-    // Normalize line breaks
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
 
 /**
  * Check if PDF is likely scanned (image-based)
+ * Always returns true since we use Gemini Vision for all PDFs
  */
 function isLikelyScannedPDF(extractedText, numPages) {
-  if (!extractedText || numPages === 0) return true;
-  
-  // Calculate characters per page
-  const charsPerPage = extractedText.length / numPages;
-  
-  // If very few characters per page, likely scanned
-  if (charsPerPage < 100) return true;
-  
-  // If mostly non-alphabetic characters, likely OCR issues
-  const alphaRatio = (extractedText.match(/[a-zA-Z]/g) || []).length / extractedText.length;
-  if (alphaRatio < 0.3) return true;
-  
-  return false;
+  return true; // Always use OCR path
 }
 
 /**
