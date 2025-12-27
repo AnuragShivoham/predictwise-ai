@@ -19,6 +19,9 @@ const { generalLimiter } = require('./middleware/rateLimit');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Trust proxy for Vercel/reverse proxy deployments (required for rate limiting)
+app.set('trust proxy', 1);
+
 // Initialize Supabase client (global for routes to access)
 if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
   global.supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
