@@ -55,6 +55,23 @@ app.use('/api/progress', progressRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/export', exportRoutes);
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    name: 'PredictWiseAI API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/api/health',
+      analyze: '/api/analyze',
+      predictions: '/api/predictions',
+      progress: '/api/progress',
+      analytics: '/api/analytics',
+      export: '/api/export'
+    }
+  });
+});
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found', path: req.path });
